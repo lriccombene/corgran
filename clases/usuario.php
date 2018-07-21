@@ -7,13 +7,13 @@
  */
 
     namespace app\clases;
-    require_once 'clases/coneccion.php';
+    //require_once 'clases/coneccion.php';
     use mysqli;
     use mysqli_query;
     use mysqli_error;
     use mysql_fetch_assoc;
     use  app\clases\coneccion;
-	$obj_coneccion = new coneccion(); //
+	//$obj_coneccion = new coneccion(); //
 
 /**
  * Description of cuotas
@@ -21,10 +21,10 @@
  * @author soporte
  */
 
-if(isset($_POST['nombre']) && isset($_POST['clave'])){
-    $nombre = $_POST["nombre"];
-    $clave = $_POST["clave"];
-    $clave = $_POST["clave"];
+if(isset($_GET['nombre']) && isset($_GET['clave'])){
+    $nombre = $_GET["nombre"];
+    $clave = $_GET["clave"];
+
     $obj_usuario = new usuario();
     $obj_usuario->nombre= $nombre;
     $obj_usuario->clave= $clave;
@@ -32,11 +32,13 @@ if(isset($_POST['nombre']) && isset($_POST['clave'])){
     $obj_usuario->guardar_usuario($obj_usuario);
 }
 
-if($_POST['valorBusqueda']){
-    var_dump("holaaaaaaaaaaaaa");
-    $nombre = $_POST["valorBusqueda"];
+if(isset($_POST['busqueda'])){
+    session_start();
+	$_SESSION['Buscar'] =TRUE;
+    $nombre = $_POST["busqueda"];
+	$_SESSION['nombre'] =$nombre;
     $obj_usuario = new usuario();
-    $obj_usuario->Buscar_usuario($nombre);
+    $obj_usuario->Buscar_usuario($_POST["busqueda"]);
 }
         
         
@@ -53,7 +55,7 @@ class usuario {
                 clave => "Telesur"
             ],
             [
-                               id_usuario =>1,
+                 id_usuario =>1,
                 tipo_usu => "Administrador",
                 nombre => "Informatica",
                 clave => "Telesur"
@@ -76,34 +78,33 @@ class usuario {
     } 
         
     public function guardar_usuario($usuario){
-		//print_r($usuario->nombre);
-		$con = mysqli_connect('localhost', 'root', 'slam2016', 'corgran') or die('Error al intentar conectarse a la base de datos.');
-                //$con = $obj_coneccion->conectar();
-                mysqli_query($con, 'SET NAMES "utf8"');
-		$consulta = "INSERT INTO usuarios (nombre, tipo_usu, clave) VALUES ('$usuario->nombre','$usuario->tipo_usu', '$usuario->clave')";
-		if(mysqli_query($con, $consulta)){
-		   echo 'Registro insertado correctamente.';
-                //   $result = $conn->lastInsertRowID();
-		}else{
-		   echo 'Error: ' . mysqli_error($con);
-		}
-		mysqli_close($con);
+		
                 //return $result;
 			
         // Create connection
         //$conn = $obj_coneccion->conectar();
-        
-       // $sql = 
+        $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+
+			// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+			// Check connection
+		if ($conn->connect_error) {
+		        die("Connection failed: " . $conn->connect_error);
+		} 
+        $sql = "INSERT INTO usuarios (nombre, tipo_usu, clave) VALUES ('$usuario->nombre','$usuario->tipo_usu', '$usuario->clave')";
         //print_r($sql);
-       // if ($conn->query($sql) === TRUE) {
-       //     $result = $conn->lastInsertRowID();
-       // } else {
-       /*     $result = "Error: " . $sql . "<br>" . $conn->error;
+        if ($conn->query($sql) === TRUE) {
+            $result = $conn->lastInsertRowID();
+        } else {
+            $result = "Error: " . $sql . "<br>" . $conn->error;
         }
         
         $conn->close();
         return $result;
-*/
+
     }
     
     public function borrar_usuario($id_usuario){
@@ -122,44 +123,50 @@ class usuario {
     
     public static function Buscar_usuario($nombre) {
 
+
         $servername = "localhost";
-	$username = "root";
-	$password = "slam2016";
-	$dbname = "corgran";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
 
-		// Create connection
-	$conn = new mysqli($servername, $username, $password, $dbname);
-		// Check connection
-	if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-	} 
-        $sql = "SELECT id_usuario,nombre,clave,tipo_usu FROM `usuarios` where WHERE nombre like '%$nombre%' ";
-        $result = $conn->query($sql);
-        $resultado=[];
-        if ($result->num_rows > 0) {
-            // output data of each row
-            while($row = $result->fetch_assoc()) {
-				//var_dump($row);	                
-				$obj_usu = new usuario($row["id_usuario"],$row["tipo_usu"],$row["nombre"],$row["clave"]);
-                $resultado[]=$obj_usu;
-            }
+			// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+			// Check connection
+		if ($conn->connect_error) {
+		        die("Connection failed: " . $conn->connect_error);
+		} 
+			$parte1= "SELECT id_usuario,nombre,clave,tipo_usu FROM `usuarios` WHERE nombre like '%";
+			
+		    $sql = $parte1. $_SESSION['nombre'] . "%'";
+		    $result = $conn->query($sql);
+		    $resultado=[];
+		    if ($result->num_rows > 0) {
+		        // output data of each row
+		        while($row = $result->fetch_assoc()) {
+					//var_dump($row);	                
+					$obj_usu = new usuario($row["id_usuario"],$row["tipo_usu"],$row["nombre"],$row["clave"]);
+		            $resultado[]=$obj_usu;
+		        }
 
-        } else {
-            echo "0 results";
-        }
-        $_SESSION['Buscar'] =TRUE;
-        $conn->close();
-        return $resultado; 
-        
+		    } else {
+		        echo "0 results";
+		    }
+
+		    $conn->close();
+			$_SESSION['resultado']=$resultado;
+      		//return ==$resultado;
+
+			header('Location: ../index.php');
+
     }
-    
+  
     
     public static function lista_usuarios()
     {
         
 		$servername = "localhost";
 		$username = "root";
-		$password = "slam2016";
+		$password = "slam2018";
 		$dbname = "corgran";
 
 		// Create connection
@@ -182,7 +189,7 @@ class usuario {
         } else {
             echo "0 results";
         }
-        $_SESSION['Buscar']=FALSE;
+        //$_SESSION['Buscar']=FALSE;
         $conn->close();
         return $resultado;   
     }
@@ -200,60 +207,5 @@ class usuario {
         
     }
     
-    
-    
+
 }
-{
-        
-		$servername = "localhost";
-		$username = "root";
-		$password = "slam2016";
-		$dbname = "corgran";
-
-		// Create connection
-		$conn = new mysqli($servername, $username, $password, $dbname);
-		// Check connection
-		if ($conn->connect_error) {
-			die("Connection failed: " . $conn->connect_error);
-		} 
-        $sql = "SELECT id_usuario,nombre,clave,tipo_usu FROM `usuarios`";
-        $result = $conn->query($sql);
-        $resultado=[];
-        if ($result->num_rows > 0) {
-            // output data of each row
-            while($row = $result->fetch_assoc()) {
-				//var_dump($row);	                
-				$obj_usu = new usuario($row["id_usuario"],$row["tipo_usu"],$row["nombre"],$row["clave"]);
-                $resultado[]=$obj_usu;
-            }
-
-        } else {
-            echo "0 results";
-        }
-        $conn->close();
-        return $resultado;   
-    }
-{
-        // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "Update usuario set tipo_usu='$obj_usu->id_usuario',nombre='$obj_usu->nombre',clave='$obj_usu->clave' where id_usuario ='$obj_usu->id_usuario'";
-        
-        mysqli_query($conn,$sql) or die(mysqli_error($conn));
-        
-        $conn->close();
-        
-    }
-{
-            $lista_usuario =  $this->$lista_usu();  
-    }
-{        
-        $persona1 = new usuario(1,'mariano', '38', 'Administrador');
-        $persona2 = new usuario(2,'juan', '5', 'M', 'Administrador');
-        $persona3 = new usuario(3,'ivan', '15', 'M', 'Administrador');
-        $persona4 = new usuario(4,'valeria', '37', 'F', 'Administrador');
-        $persona5 = new usuario(5,'berenice', '18', 'F', 'Administrador');
-        return [
-            $persona1, $persona2, $persona3, $persona4, $persona5
-        ];
-    }
