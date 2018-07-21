@@ -1,10 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
     namespace app\clases;
     //require_once 'clases/coneccion.php';
@@ -15,15 +10,11 @@
     use  app\clases\coneccion;
 	//$obj_coneccion = new coneccion(); //
 
-/**
- * Description of cuotas
- *
- * @author soporte
- */
 
-if(isset($_GET['nombre']) && isset($_GET['clave'])){
-    $nombre = $_GET["nombre"];
-    $clave = $_GET["clave"];
+//pasadatos para guardar usuario
+if(isset($_POST['nombre']) && isset($_POST['contra'])){
+    $nombre = $_POST["nombre"];
+    $clave = $_POST["contra"];
 
     $obj_usuario = new usuario();
     $obj_usuario->nombre= $nombre;
@@ -32,6 +23,7 @@ if(isset($_GET['nombre']) && isset($_GET['clave'])){
     $obj_usuario->guardar_usuario($obj_usuario);
 }
 
+//busca con fiultro usuario
 if(isset($_POST['busqueda'])){
     session_start();
 	$_SESSION['Buscar'] =TRUE;
@@ -40,33 +32,40 @@ if(isset($_POST['busqueda'])){
     $obj_usuario = new usuario();
     $obj_usuario->Buscar_usuario($_POST["busqueda"]);
 }
-        
+
+//elimina usuario
+if(isset($_POST['valorCaja1'])) {
+ 	//session_start();
+	//$_SESSION['valorCaja1']=$_POST['valorCaja1'];
+	
+	$id_usuario=$_POST['valorCaja1'];
+	
+	$obj_usuario = new usuario();
+    $obj_usuario->borrar_usuario($id_usuario);
+
+
+}
+
+//busca usuario por id  para acutalizar
+if(isset($_POST['actualizarUsu'])) {
+ 	//session_start();
+	//$_SESSION['valorCaja1']=$_POST['valorCaja1'];
+	
+	 $id_usuario=$_POST['actualizarUsu'];
+	
+	 $obj_usuario = new usuario();
+    $obj_usuario->Buscar_usuario_por_id($id_usuario);
+
+
+}
+
         
 class usuario {
     public $id_usuario; //directoria o ruta de archivo
     public $tipo_usu;
     public $nombre;
     public $clave;
-    public static $lista_usu =[
-            [
-                id_usuario =>1,
-                tipo_usu => "Administrador",
-                nombre => "Informatica",
-                clave => "Telesur"
-            ],
-            [
-                 id_usuario =>1,
-                tipo_usu => "Administrador",
-                nombre => "Informatica",
-                clave => "Telesur"
-            ],
-            [
-                id_usuario =>1,
-                tipo_usu => "Administrador",
-                nombre => "Informatica",
-                clave => "Telesur"
-            ]
-        ];
+   
 
 
     public function __construct($id_usuario,$tipo_usu,$nombre,$clave) {
@@ -78,9 +77,7 @@ class usuario {
     } 
         
     public function guardar_usuario($usuario){
-		
-                //return $result;
-			
+	
         // Create connection
         //$conn = $obj_coneccion->conectar();
         $servername = "localhost";
@@ -108,16 +105,29 @@ class usuario {
     }
     
     public function borrar_usuario($id_usuario){
-        
-         // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "Delete from usuario where id_usuario ='$id_usuario'";
-        
-        mysqli_query($conn,$sql) or die(mysqli_error($conn));
-        
-        $conn->close();
 
+      $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+
+			// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+			// Check connection
+		if ($conn->connect_error) {
+		        die("Connection failed: " . $conn->connect_error);
+		} 
+        
+        $sql = "Delete from `usuarios` where id_usuario =".$id_usuario;        
+
+		if ($conn->query($sql) === TRUE) {
+    		echo "El registro se elimino correctamente";
+		} else {
+    		echo "Error deleting record: " . $conn->error;
+		}
+
+		$conn->close();
+		
 
     }
     
@@ -159,6 +169,41 @@ class usuario {
 			header('Location: ../index.php');
 
     }
+    
+    public function Buscar_usuario_por_id($id_usuario){
+		      $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+
+			// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+			// Check connection
+		if ($conn->connect_error) {
+		        die("Connection failed: " . $conn->connect_error);
+		} 
+			$parte1= "SELECT id_usuario,nombre,clave,tipo_usu FROM `usuarios` WHERE id_usuario=";
+			
+		    $sql = $parte1. $id_usuario;
+		    $result = $conn->query($sql);
+		    $resultado=[];
+		    if ($result->num_rows > 0) {
+		        // output data of each row
+		        while($row = $result->fetch_assoc()) {
+					//var_dump($row);	                
+					$obj_usu = new usuario($row["id_usuario"],$row["tipo_usu"],$row["nombre"],$row["clave"]);
+		            $resultado[]=$obj_usu;
+		        }
+				
+		    } else {
+		        echo "0 results";
+		    }
+
+		    $conn->close();
+				echo json_encode($resultado);
+      	
+    
+    }
   
     
     public static function lista_usuarios()
@@ -179,6 +224,7 @@ class usuario {
         $result = $conn->query($sql);
         $resultado=[];
         if ($result->num_rows > 0) {
+            
             // output data of each row
             while($row = $result->fetch_assoc()) {
 				//var_dump($row);	                
@@ -196,16 +242,96 @@ class usuario {
     
     public function actualizar_usuario($obj_usu)
     {
-        // Create connection
-        $conn = $obj_coneccion->conectar();
+       
+		$servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+
+			// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+			// Check connection
+		if ($conn->connect_error) {
+		        die("Connection failed: " . $conn->connect_error);
+		} 
         
-        $sql = "Update usuario set tipo_usu='$obj_usu->id_usuario',nombre='$obj_usu->nombre',clave='$obj_usu->clave' where id_usuario ='$obj_usu->id_usuario'";
-        
-        mysqli_query($conn,$sql) or die(mysqli_error($conn));
-        
-        $conn->close();
-        
+        $sql ="Update usuarios set tipo_usu='$obj_usu->id_usuario',nombre='$obj_usu->nombre',clave='$obj_usu->clave', tipo_usu='$obj_usu->tipo_usu' where id_usuario ='$obj_usu->id_usuario'";        
+
+		if ($conn->query($sql) === TRUE) {
+    		echo "El registro se actualizo correctamente";
+		} else {
+    		echo "Error deleting record: " . $conn->error;
+		}
+
+		$conn->close();        
+    }
+    
+    
+    public static function paginado_usuario(){
+    
+  //primero obtenemos el parametro que nos dice en que pagina estamos
+		    $page = 1; //inicializamos la variable $page a 1 por default
+		    if(array_key_exists('pg', $_GET)){
+		        $page = $_GET['pg']; //si el valor pg existe en nuestra url, significa que estamos en una pagina en especifico.
+		    }
+		    //ahora que tenemos en que pagina estamos obtengamos los resultados:
+		    // a) el numero de registros en la tabla
+		    $mysqli = new mysqli("localhost","root","slam2018","corgran");
+		    if ($mysqli->connect_errno) {
+				printf("Connect failed: %s\n", $mysqli->connect_error);
+				exit();
+			}
+
+
+		    $conteo_query =  $mysqli->query("SELECT COUNT(*) as conteo FROM usuarios");
+		    $conteo = "";
+		    if($conteo_query){
+		    	while($obj = $conteo_query->fetch_object()){ 
+		    	 	$conteo =$obj->conteo; 
+		    	}
+		    }
+		    $conteo_query->close(); 
+		    unset($obj); 
+    		
+		    //ahora dividimos el conteo por el numero de registros que queremos por pagina.
+		    $max_num_paginas = intval($conteo/10); //en esto caso 10
+			
+		    // ahora obtenemos el segmento paginado que corresponde a esta pagina
+		    $segmento = $mysqli->query("SELECT *  FROM usuarios LIMIT ".(($page-1)*10).", 10 ");
+          $resultado=[];
+		    //ya tenemos el segmento, ahora le damos output.
+		    if($segmento){
+			  // echo '<table>';
+			    while($obj2 = $segmento->fetch_object())
+			    {
+			    	$obj_usu = new usuario($obj2->id_usuario,$obj2->tipo_usu,$obj2->nombre,$obj2->clave);
+                $resultado[]=$obj_usu;
+			     /* echo '<tr>
+			                   <td>'.$obj2->id_usuario.'</td>
+			                   <td>'.$obj2->tipo_usu.'</td>
+			                   <td>'.$obj2->nombre.'</td>
+			             </tr>'; 
+			   */ }
+			   // echo '</table><br/><br/>';
+			}
+	
+		    //ahora viene la parte importante, que es el paginado
+		    //recordemos que $max_num_paginas fue previamente calculado.
+		    for($i=0; $i<$max_num_paginas;$i++){
+
+		       echo '<a href="index.php?pg='.($i+1).'">'.($i+1).'</a> | ';
+		       
+		    }  
+		    echo '<div>-------------------------- PAginacion------------------------------------------------</div>';    
+            return $resultado;  
+    
     }
     
 
 }
+
+
+
+?>
+
+
