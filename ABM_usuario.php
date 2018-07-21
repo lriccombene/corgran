@@ -1,78 +1,186 @@
+
 <?php
-    //require_once 'header.php';
+    session_start();
+    require_once 'header.php';
     require_once 'clases/usuario.php';
     use app\clases\usuario;
-    $obj_usuario = new usuario(1,1,1,1); // 
-    
-    //https://disenowebakus.net/llevando-datos-de-las-paginas-php-a-la-base-mysql.php
+    $obj_usuario = new usuario; // 
 
+    //$_SESSION['Buscar']=FALSE;
+    
 ?>
-<script>
-    function accion()
-    {
-        $.ajax({
-            type:'POST', //aqui puede ser igual get
-            url: 'clases/usuario.php',//aqui va tu direccion donde esta tu funcion php
-            data: {id:1,otrovalor:'valor'},//aqui tus datos
-            success:function(data){
-                //lo que devuelve tu archivo mifuncion.php
-           },
-           error:function(data){
-            //lo que devuelve si falla tu archivo mifuncion.php
-           }
-         });
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+<script >
+
+realizaProcesoActualizar
+
+function realizaProcesoActualizar(actualizarUsu){
+      $.ajax({
+    type: 'POST',
+    url: 'clases/usuario.php',
+    data: {'actualizarUsu': actualizarUsu},
+    success: function(msg) {
+			alert(msg);
+			window.location.href = 'index.php?id_usuario=7&nombre=test&tipo_usu=Administrador&contra=45';
     }
+  });
+  
+        
+        
+}
+
+
+function realizaProcesoEliminar(valorCaja1){
+      $.ajax({
+    type: 'POST',
+    url: 'clases/usuario.php',
+    data: {'valorCaja1': valorCaja1},
+    success: function(msg) {
+      alert(msg);
+      window.location = '/index.php';
+    }
+  });
+  
+        
+        
+}
 </script>
 
 
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>CoRGraN - Mi cuenta</title>
 
-    <meta name="description" content="Sitio web del Colegio Rionegrino de graduados en nutrición">
-    <meta name="author" content="Slamcoop - VSoft">
-    <meta name="robot" content="noindex, nofollow">
 
-    <link href="css/bootstrap-reboot.min.css" rel="stylesheet" type="text/css" media="all">
-    <link href="css/bootstrap-grid.min.css" rel="stylesheet" type="text/css" media="all">
-    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
-    <link href="css/style.css" rel="stylesheet" type="text/css" media="all">
-    <link rel="shortcut icon" href="img/favicon.ico" />
-    <link rel="stylesheet" type="text/css" media="all" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" media="all" href="css/stellarnav.css">
-
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/popper.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/stellarnav.min.js"></script>
-    <!-- <script type="text/javascript" src="js/scripts.js"></script> --> 
-    <script src="//code.jquery.com/jquery-latest.js"></script>
-    <script src="miscript.js"></script>
-    
-</head>
-<body>
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
-			<form role="form" id="form_usuario" method="post" action="\clases\usuario.php">
+			<form role="form" id="form_usuario" method="POST" action="/corgran/clases/usuario.php">
+                            <div class="form-group">
+					 
+				<label for="exampleInputEmail1">
+                                    Usuario
+                               	</label>
+                               	<input type="text" class="form-control" name="busqueda" id="busqueda" value="" placeholder="" maxlength="30" autocomplete="off" />
+                            </div>
+                    
+		<button type="submit" class="btn btn-primary" id="buscar">Buscar</button>
+         </form>
+		</div>
+	</div>
+</div>
+
+
+
+<div>--------------------------------------------------------------------------</div>
+
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							id
+						</th>
+						<th>
+							Nombre
+						</th>
+						<th>
+							Clave
+						</th>
+						<th>
+							Tipo Usuario
+						</th>
+						<th>
+							Accion
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+                                    <?php 
+                                    
+                                        $lista=[];
+                                        if( $_SESSION['Buscar']==null){
+														                                        	
+                                        		$lista=$obj_usuario::paginado_usuario();
+                                            //$lista=$obj_usuario::lista_usuarios();
+
+                                       }elseif($_SESSION['Buscar']==TRUE){
+                                            $lista=$obj_usuario::Buscar_usuario();
+											$lista=$_SESSION['resultado'];
+											//var_dump($_SESSION['nombre']);
+                                        }
+                                        
+                                        foreach ($lista as $value) {
+                                            
+                                          echo"<tr >
+                                                    <td>
+                                                            {$value->id_usuario}
+                                                    </td>
+                                                    <td>
+                                                            {$value->nombre}
+                                                    </td>
+                                                    <td>
+                                                            {$value->clave}
+                                                    </td>
+                                                    <td>
+                                                            {$value->tipo_usu}
+                                                    </td>
+                                                    <td>
+
+																		<input type='button' href='javascript:;' onclick='realizaProcesoEliminar($value->id_usuario);return false;' value='Eliminar'/>
+																		<input type='button' href='javascript:;' onclick='realizaProcesoActualizar($value->id_usuario);return false;' value='Actualizar'/>
+                                                    </td>
+                                                    
+                                                </tr>";
+                                      }
+                                      ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+
+
+<div>Alta Usuario Nuevo</div>
+
+<div>----------------------------------------------------------------</div>
+
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<form role="form" id="form_usuario" method="POST" action="/corgran/clases/usuario.php">
 				<div class="form-group">
 					 
 					<label for="exampleInputEmail1">
 					    Nombre
 					</label>
-					<input id="nombre" type="text" class="form-control" name="nombre" />
+					<?php
+						if(isset($_GET['id_usuario']) && isset($_GET['nombre']) && isset($_GET['tipo_usu'])){
+							//var_dump($_GET['nombre']);	
+							$valor=$_GET['nombre'];
+							echo "<input id='nombre' type='Text' class='form-control' name='nombre' value={$valor} />";						
+						}else{
+							echo "<input id='nombre' type='text' class='form-control' name='nombre' />";						
+						}
+					?>
 				</div>
 				<div class="form-group">
 					 
 					<label for="exampleInputPassword1">
 						Clave
 					</label>
-					<input id="clave" type="password" class="form-control" name="clave" />
-					
+					<?php
+						if(isset($_GET['id_usuario']) && isset($_GET['nombre'])&& isset($_GET['tipo_usu'])){
+							$valor=$_GET['contra'];
+							echo "<input id='nombre' type='Text' class='form-control' name='nombre' value={$valor} />";	
+							//echo "<input id='contra' type='password' class='form-control' name='contra' value={$valor} />";
+						}else {
+							echo "<input id='contra' type='password' class='form-control' name='contra' />";
+						}
+					?>
 				</div>
 				<div class="form-group">
     			    <label for="exampleInputPassword1">
