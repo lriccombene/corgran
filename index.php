@@ -5,18 +5,19 @@
     require_once 'clases/usuario.php';
     use app\clases\usuario;
     $obj_usuario = new usuario; // 
-    $_SESSION['Buscar']=FALSE;
+    //$_SESSION['Buscar']=FALSE;
     
 ?>
 
 
 <script type="text/javascript">
   function miFuncion() {
-
+		
 	 var textoBusqueda = $("input#buscarUsu").val();
 	 if (textoBusqueda != "") {
-        $.post("clases/usuario.php", {valorBusqueda: textoBusqueda}); 
-        //alert('Has hecho click en "miboton"');        
+		
+        $.get("/usuario.php", {valorBusqueda: textoBusqueda}); 
+               
      }
 
   }
@@ -28,7 +29,7 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
-			<form>
+			<form role="form" id="form_usuario" method="POST" action="/corgran/clases/usuario.php">
                             <div class="form-group">
 					 
 				<label for="exampleInputEmail1">
@@ -37,7 +38,7 @@
                                	<input type="text" class="form-control" name="busqueda" id="busqueda" value="" placeholder="" maxlength="30" autocomplete="off" />
                             </div>
                     
-<input type="button" name="miboton" id="miboton" value="Buscar" onclick="miFuncion()" />
+		<button type="submit" class="btn btn-primary" id="buscar">Buscar</button>
          </form>
 		</div>
 	</div>
@@ -68,12 +69,14 @@
 				</thead>
 				<tbody>
                                     <?php 
-                                    var_dump($_SESSION['Buscar']);
+                                    //var_dump($_SESSION['Buscar']);
                                         $lista=[];
-                                        if($_SESSION['Buscar']==FALSE){
+                                        if( $_SESSION['Buscar']==null){
                                             $lista=$obj_usuario::lista_usuarios();
                                         }elseif($_SESSION['Buscar']==TRUE){
                                             $lista=$obj_usuario::Buscar_usuario();
+											$lista=$_SESSION['resultado'];
+											//var_dump($_SESSION['nombre']);
                                         }
                                         
                                         foreach ($lista as $value) {
@@ -110,7 +113,7 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
-			<form role="form" id="form_usuario" method="POST" action="usuario.php">
+			<form role="form" id="form_usuario" method="GET" action="/corgran/clases/usuario.php">
 				<div class="form-group">
 					 
 					<label for="exampleInputEmail1">
