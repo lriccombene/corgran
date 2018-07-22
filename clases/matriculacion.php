@@ -1,17 +1,13 @@
 <?php
     namespace app\clases;
-    require_once 'clases/coneccion.php';
-    use \mysqli;
-    use \mysqli_query;
-    use \mysqli_error;
-    use \mysql_fetch_assoc;
-    use  app\clases\coneccion;
-	$obj_coneccion = new coneccion; //
+    use mysqli;
+    use mysqli_query;
+    use mysqli_error;
+    use mysql_fetch_assoc;
 
 class matriculacion {
     public $id_matriculacion;
     public $id_usuario; //directoria o ruta de archivo
-    public $mp; 
     public $nro_resolucion;
     public $fec_resolucion;
     public $resolucion_baja;
@@ -20,39 +16,59 @@ class matriculacion {
     public $venc_matricula;
     
 
-    public function __construct($id_matriculacion, $id_usuario, $mp,$nro_resolucion,$fec_resolucion
+    public function __construct($id_matriculacion, $id_usuario,$nro_resolucion,$fec_resolucion
                                 ,$resolucion_baja,$fec_resolucion_baja,$fec_matricula,$venc_matricula) 
     {
             $this->id_matriculacion=$id_matriculacion;
             $this->id_usuario=$id_usuario;
-            $this->mp=$mp;
             $this->nro_resolucion=$nro_resolucion;
             $this->fec_resolucion=$fec_resolucion;
             $this->resolucion_baja=$resolucion_baja;
-            $this->venc_matricula=$fec_resolucion_baja;
+            $this->fec_resolucion_baja=$fec_resolucion_baja;
             $this->fec_matricula=$fec_matricula;
             $this->venc_matricula=$venc_matricula;
 
     } 
     
-    public function guardar_matriculacion($obj_matriculacion){
+    public function guardar_matriculacion($obj_matri){
+    	/*echo $obj_matri->nro_resolucion ."--". $obj_matri->fec_resolucion ."--". $obj_matri->resolucion_baja 
+			."--".$obj_matri->fec_resolucion_baja ."--".$obj_matri->fec_matricula."--".$obj_matri->id_usuario;
+*/
+	   $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+		// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		} 
+		$sql= "SELECT * FROM `matriculacion` WHERE id_usuario=$obj_matri->id_usuario";
+		$result = $conn->query($sql);
+		$resultado="";
+		//echo $result->num_rows;
+		if ($result->num_rows > 0) {
+		    $sql = "Update matriculacion set  nro_resolucion =$obj_matri->nro_resolucion,
+		            fec_resolucion ='$obj_matri->fec_resolucion',resolucion_baja ='$obj_matri->resolucion_baja',
+                  fec_matricula ='$obj_matri->fec_matricula',venc_matricula ='$obj_matri->venc_matricula',
+                  'fec_resolucion_baja' =$obj_matri->fec_resolucion_baja; 
+                  where id_matriculacion =$obj_matri->id_matriculacion";
+		} else {
+		       $sql = "INSERT INTO matriculacion (id_usuario,nro_resolucion,fec_resolucion_baja,fec_resolucion,resolucion_baja,fec_matricula,venc_matricula)
+                		VALUES ($obj_matri->id_usuario,$obj_matri->nro_resolucion,'$obj_matri->fec_resolucion_baja',
+	                         '$obj_matri->fec_resolucion',$obj_matri->resolucion_baja,
+	                         '$obj_matri->fec_matricula','$obj_matri->venc_matricula')";
+		}
+		if ($conn->query($sql) === TRUE) {
+			            $result = "OK";
 
-        // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "INSERT INTO matriculacion (id_usuario, mp,nro_resolucion,fec_resolucion,resolucion_baja,fec_matricula,venc_matricula)
-                VALUES ('$obj_matriculacion->id_usuario','$obj_matriculacion->mp',$obj_matriculacion->nro_resolucion,
-                         $obj_matriculacion->fec_resolucion,$obj_matriculacion->resolucion_baja,$obj_matriculacion->fec_matricula,
-                         $obj_matriculacion->venc_matricula)";
-        
-        if ($conn->query($sql) === TRUE) {
-            $result = $conn->lastInsertRowID();
-        } else {
-            $result = "Error: " . $sql . "<br>" . $conn->error;
-        }
-        
-        $conn->close();
-        return $result;
+	   } else {
+	            echo "Error: " . $sql . "<br>" . $conn->error;
+	   }
+	   $conn->close();
+	   echo "grabado ok matriculado";
+
     }
     
     public function borrar_matriculacion($id_matriculacion){
