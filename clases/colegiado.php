@@ -13,7 +13,11 @@
     get_include_path()
 	)));
 	
-	require_once 'clases/delegacion.php';
+	require_once 'clases/delegacion.php';	
+	require_once 'clases/datos_personales.php';
+
+
+	
 
 	
 
@@ -34,6 +38,20 @@ if(isset($_GET['btnAceptar'])){
 		 $obj_delegacion->anio = $_GET['DDLAnio'];
 		 $obj_delegacion->id_usuario = 9;
 		 $obj_delegacion->guardar_delegacion($obj_delegacion);
+		 
+		 
+		 $obj_dto_person= new datos_personales();
+		 $obj_dto_person->apellido =$_GET['txtApellido'];
+	    $obj_dto_person->nombre =$_GET['txtNombre'];
+	    $obj_dto_person->dni =$_GET['txtDNI'];
+	    $obj_dto_person->cuit_cuil =$_GET['txtCUIT'];
+	    $obj_dto_person->fec_nac =$_GET['txtFecNac'];
+	    $obj_dto_person->mp =$_GET['txtMP'];
+	    $obj_dto_person->id_usuario =9;
+//			echo $obj_dto_person->apellido.', '.$obj_dto_person->nombre.','.$obj_dto_person->dni.',
+	//	        '.$obj_dto_person->cuit_cuil.','.$obj_dto_person->fec_nac.','.$obj_dto_person->mp;
+			
+	 	 $obj_dto_person->guardar_datos_personales( $obj_dto_person);
 	 
 }
 
