@@ -20,8 +20,24 @@ function realizaProcesoActualizar(actualizarUsu){
     url: 'clases/usuario.php',
     data: {'actualizarUsu': actualizarUsu},
     success: function(msg) {
-			alert(msg);
-			window.location.href = 'index.php?id_usuario=7&nombre=test&tipo_usu=Administrador&contra=45';
+			//alert(msg);
+			var json = msg;
+ 			//Lo parseamos para convertirlo en objeto
+			var types = JSON.parse(json);
+			 //Y lo recorremos
+			 id_usario="";
+			 nombre="";
+			 tipo_usu="";
+			 contra="";
+			for(x=0; x<types.length; x++) {
+				id_usario=types[x].id_usuario;
+				nombre=types[x].nombre;
+				tipo_usu=types[x].tipo_usu;
+				contra=types[x].clave;
+				
+    			//alert(types[x].id_usuario +"---"+types[x].nombre);
+    			}			
+			window.location.href = 'index.php?id_usuario='+id_usario+'&nombre='+nombre+'&tipo_usu='+tipo_usu+'&clave='+contra+"'";
     }
   });
   
@@ -37,7 +53,7 @@ function realizaProcesoEliminar(valorCaja1){
     data: {'valorCaja1': valorCaja1},
     success: function(msg) {
       alert(msg);
-      window.location = '/index.php';
+      window.location.href = 'index.php';
     }
   });
   
@@ -47,8 +63,81 @@ function realizaProcesoEliminar(valorCaja1){
 </script>
 
 
+<div>Alta Usuario Nuevo</div>
 
+<div>----------------------------------------------------------------</div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<form role="form" id="form_usuario" method="POST" action="/corgran/clases/usuario.php">
+				<div class="form-group">
+					 
+					<label for="exampleInputEmail1">
+					    Nombre Usuario
+					</label>
+					<?php
+						if(isset($_GET['id_usuario']) && isset($_GET['nombre']) && isset($_GET['tipo_usu'])){
+							//var_dump($_GET['nombre']);	
+							$valor=$_GET['nombre'];
+							echo "<input id='nombre' type='Text' class='form-control' name='nombre' value={$valor} />";						
+						}else{
+							echo "<input id='nombre' type='text' class='form-control' name='nombre' />";						
+						}
+					?>
+				</div>
+				<div class="form-group">
+					 
+					<label for="exampleInputPassword1">
+						Clave
+					</label>
+					<?php
+						if(isset($_GET['id_usuario']) && isset($_GET['nombre'])&& isset($_GET['tipo_usu'])){
+							$valor=$_GET['clave'];
+							echo "<input id='contra' type='Text' class='form-control' name='contra' value={$valor} />";	
+							//echo "<input id='contra' type='password' class='form-control' name='contra' value={$valor} />";
+						}else {
+							echo "<input id='contra' type='Text' class='form-control' name='contra' />";
+						}
+					?>
+				</div>
+				<div class="form-group">
+					 
+					<label for="exampleInputPassword1">
+						Id_usario
+					</label>
+					<?php
+						if(isset($_GET['id_usuario']) && isset($_GET['nombre'])&& isset($_GET['tipo_usu'])){
+							$valor=$_GET['id_usuario'];
+							echo "<input id='id_usu' type='Text' class='form-control' name='id_usu' value={$valor} />";	
+							//echo "<input id='contra' type='password' class='form-control' name='contra' value={$valor} />";
+						}else {
+							echo "<input id='id_usu' type='Text' class='form-control' name='id_usu' />";
+						}
+					?>
+				</div>
+				<div class="form-group">
+    			    <label for="exampleInputPassword1">
+    						Tipo usuario
+    				</label>
+                    <div class="btn-group">
+                          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Seleccionar
+                          </button>
+                          <div class="dropdown-menu">
+                              <a name="a" class="dropdown-item" href="#">Colegiado</a>
+                              <a name="a"class="dropdown-item" href="#">Administrador</a>
+                              <a name="a"class="dropdown-item" href="#">Tesorero</a>
+                          </div>
+                    </div>
+                </div>
+					<button type="submit" class="btn btn-primary" name="nuevoUsuBoton" id="guardarUsu">Guardar</button>
+					<button type="submit" class="btn btn-primary" name="actualizarUsuBoton" id="actualizarUsuBoton">Actualizar</button>
+          </form>
+		</div>
+	</div>
+</div>
 
+<div>------------------------------------------------------------------------------</div>
 
 <div class="container-fluid">
 	<div class="row">
@@ -57,7 +146,7 @@ function realizaProcesoEliminar(valorCaja1){
                             <div class="form-group">
 					 
 				<label for="exampleInputEmail1">
-                                    Usuario
+                                    Nombre de Usuario
                                	</label>
                                	<input type="text" class="form-control" name="busqueda" id="busqueda" value="" placeholder="" maxlength="30" autocomplete="off" />
                             </div>
@@ -129,7 +218,7 @@ function realizaProcesoEliminar(valorCaja1){
                                                     <td>
 
 																		<input type='button' href='javascript:;' onclick='realizaProcesoEliminar($value->id_usuario);return false;' value='Eliminar'/>
-																		<input type='button' href='javascript:;' onclick='realizaProcesoActualizar($value->id_usuario);return false;' value='Actualizar'/>
+																		<input type='button' href='javascript:;' onclick='realizaProcesoActualizar($value->id_usuario);return false;' value='Seleccionar'/>
                                                     </td>
                                                     
                                                 </tr>";
@@ -143,64 +232,7 @@ function realizaProcesoEliminar(valorCaja1){
 
 
 
-<div>Alta Usuario Nuevo</div>
-
-<div>----------------------------------------------------------------</div>
 
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-12">
-			<form role="form" id="form_usuario" method="POST" action="/corgran/clases/usuario.php">
-				<div class="form-group">
-					 
-					<label for="exampleInputEmail1">
-					    Nombre
-					</label>
-					<?php
-						if(isset($_GET['id_usuario']) && isset($_GET['nombre']) && isset($_GET['tipo_usu'])){
-							//var_dump($_GET['nombre']);	
-							$valor=$_GET['nombre'];
-							echo "<input id='nombre' type='Text' class='form-control' name='nombre' value={$valor} />";						
-						}else{
-							echo "<input id='nombre' type='text' class='form-control' name='nombre' />";						
-						}
-					?>
-				</div>
-				<div class="form-group">
-					 
-					<label for="exampleInputPassword1">
-						Clave
-					</label>
-					<?php
-						if(isset($_GET['id_usuario']) && isset($_GET['nombre'])&& isset($_GET['tipo_usu'])){
-							$valor=$_GET['contra'];
-							echo "<input id='nombre' type='Text' class='form-control' name='nombre' value={$valor} />";	
-							//echo "<input id='contra' type='password' class='form-control' name='contra' value={$valor} />";
-						}else {
-							echo "<input id='contra' type='password' class='form-control' name='contra' />";
-						}
-					?>
-				</div>
-				<div class="form-group">
-    			    <label for="exampleInputPassword1">
-    						Tipo usuario
-    				</label>
-                    <div class="btn-group">
-                          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Seleccionar
-                          </button>
-                          <div class="dropdown-menu">
-                              <a name="a" class="dropdown-item" href="#">Colegiado</a>
-                              <a name="a"class="dropdown-item" href="#">Administrador</a>
-                              <a name="a"class="dropdown-item" href="#">Tesorero</a>
-                          </div>
-                    </div>
-                </div>
-		<button type="submit" class="btn btn-primary" id="guardarUsu">Guardar</button>
-                </form>
-		</div>
-	</div>
-</div>
 </body>
 </html>
