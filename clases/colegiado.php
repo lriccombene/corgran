@@ -1,13 +1,20 @@
 <?php
 
     namespace app\clases;
-    //require_once 'clases/coneccion.php';
+
     use mysqli;
     use mysqli_query;
     use mysqli_error;
     use mysql_fetch_assoc;
     use  app\clases\coneccion;
 	//$obj_coneccion = new coneccion(); //
+	set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(__DIR__ . '/..'),
+    get_include_path()
+	)));
+	
+	require_once 'clases/delegacion.php';
+
 	
 
 if(isset($_GET['btnAceptar'])){
@@ -20,25 +27,20 @@ if(isset($_GET['btnAceptar'])){
 	    $obj_colegiado->id_usuario =9;
 	 	 $obj_colegiado->guardar_colegiado($obj_colegiado);
 	 	 
+	 	 $obj_delegacion = new delegacion();
+	    $obj_delegacion->delegacion = $_GET['DDLDelegacion'];
+		 $obj_delegacion->localidad = $_GET['DDLLocalidad'];
+		 $obj_delegacion->mes = $_GET['DDLMes'];
+		 $obj_delegacion->anio = $_GET['DDLAnio'];
+		 $obj_delegacion->id_usuario = 9;
+		 $obj_delegacion->guardar_delegacion($obj_delegacion);
 	 
 }
 
 	//esto hay que modificarlo lo dejo en 9 para continuar pero tiene que llegar en la URL
 	//$id_usuario=$_GET['id_usuario']	
 /*	$id_usuario=9;
-	$obj_colegiado= new colegiado();
-	$obj_colegiado->nro_colegiado =$_POST['txtColegiado'];
-	$obj_colegiado->rol =$_POST['DDLRol'];
-	$obj_colegiado->id_usuario =9;
-	$obj_colegiado->guardar_colegiado($obj_colegiado);
-	*/
-	/*$obj_delegacion = new delegacion();
-	$obj_delegacion-> = $_GET[''];
-		$obj_delegacion-> = $_GET[''];
-			$obj_delegacion-> = $_GET[''];
-				$obj_delegacion-> = $_GET[''];
-					$obj_delegacion-> = $_GET[''];*/
-//}
+*/
 
 class colegiado{
     public $id_colegiado;
@@ -85,7 +87,7 @@ class colegiado{
 	            $result = "Error: " . $sql . "<br>" . $conn->error;
 	   }
 	   $conn->close();
-	   echo "grabado ok";
+	   echo "grabado ok colegiado";
     
     }
 
