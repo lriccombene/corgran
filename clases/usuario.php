@@ -10,9 +10,23 @@
     use  app\clases\coneccion;
 	//$obj_coneccion = new coneccion(); //
 
+if(isset($_POST['actualizarUsuBoton'])){
+	 //var_dump($_POST['contra');
+	 $nombre = $_POST["nombre"];
+    $clave = $_POST["contra"];
+    $id_usuario= $_POST["id_usu"];
+    $obj_usuario = new usuario();
+    $obj_usuario->nombre= $nombre;
+    $obj_usuario->clave= $clave;
+    $obj_usuario->tipo_usu= "Administrador";
+    $obj_usuario->id_usu= $id_usuario;
+    
+    $obj_usuario->actualizar_usuario($obj_usuario);
+}
 
 //pasadatos para guardar usuario
 if(isset($_POST['nombre']) && isset($_POST['contra'])){
+	if($_POST['nombre']) {
     $nombre = $_POST["nombre"];
     $clave = $_POST["contra"];
 
@@ -20,7 +34,9 @@ if(isset($_POST['nombre']) && isset($_POST['contra'])){
     $obj_usuario->nombre= $nombre;
     $obj_usuario->clave= $clave;
     $obj_usuario->tipo_usu= "Administrador";
+    
     $obj_usuario->guardar_usuario($obj_usuario);
+ }
 }
 
 //busca con fiultro usuario
@@ -100,7 +116,7 @@ class usuario {
         }
         
         $conn->close();
-        return $result;
+			header('Location: ../index.php');
 
     }
     
@@ -127,7 +143,7 @@ class usuario {
 		}
 
 		$conn->close();
-		
+		header('Location: ../index.php');
 
     }
     
@@ -242,7 +258,8 @@ class usuario {
     
     public function actualizar_usuario($obj_usu)
     {
-       
+    	//echo "El registro se actualizo correctamente";
+      
 		$servername = "localhost";
 		$username = "root";
 		$password = "slam2018";
@@ -255,7 +272,7 @@ class usuario {
 		        die("Connection failed: " . $conn->connect_error);
 		} 
         
-        $sql ="Update usuarios set tipo_usu='$obj_usu->id_usuario',nombre='$obj_usu->nombre',clave='$obj_usu->clave', tipo_usu='$obj_usu->tipo_usu' where id_usuario ='$obj_usu->id_usuario'";        
+        $sql ="Update usuarios set nombre='$obj_usu->nombre',clave='$obj_usu->clave', tipo_usu='$obj_usu->tipo_usu' where id_usuario ='8'";        
 
 		if ($conn->query($sql) === TRUE) {
     		echo "El registro se actualizo correctamente";
@@ -263,7 +280,8 @@ class usuario {
     		echo "Error deleting record: " . $conn->error;
 		}
 
-		$conn->close();        
+		$conn->close();   
+		header('Location: ../index.php');     
     }
     
     
@@ -333,5 +351,4 @@ class usuario {
 
 
 ?>
-
 
