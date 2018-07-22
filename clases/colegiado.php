@@ -15,11 +15,10 @@
 	
 	require_once 'clases/delegacion.php';	
 	require_once 'clases/datos_personales.php';
+	require_once 'clases/matriculacion.php';
+	require_once 'clases/titulo.php';
 
 
-	
-
-	
 
 if(isset($_GET['btnAceptar'])){
 	 //var_dump($_GET['DDLRol');
@@ -39,7 +38,7 @@ if(isset($_GET['btnAceptar'])){
 		 $obj_delegacion->id_usuario = 9;
 		 $obj_delegacion->guardar_delegacion($obj_delegacion);
 		 
-		 
+		 //-------DATOS PERSONALES------------
 		 $obj_dto_person= new datos_personales();
 		 $obj_dto_person->apellido =$_GET['txtApellido'];
 	    $obj_dto_person->nombre =$_GET['txtNombre'];
@@ -48,10 +47,32 @@ if(isset($_GET['btnAceptar'])){
 	    $obj_dto_person->fec_nac =$_GET['txtFecNac'];
 	    $obj_dto_person->mp =$_GET['txtMP'];
 	    $obj_dto_person->id_usuario =9;
-//			echo $obj_dto_person->apellido.', '.$obj_dto_person->nombre.','.$obj_dto_person->dni.',
-	//	        '.$obj_dto_person->cuit_cuil.','.$obj_dto_person->fec_nac.','.$obj_dto_person->mp;
-			
 	 	 $obj_dto_person->guardar_datos_personales( $obj_dto_person);
+
+		 $obj_matriculacion = new matriculacion();
+		 $obj_matriculacion->nro_resolucion =$_GET['txtNroResolucion'];
+	    $obj_matriculacion->fec_resolucion=$_GET['txtFechaResolucion'];
+	    $obj_matriculacion->resolucion_baja =$_GET['txtResolucionBaja'];
+	    $obj_matriculacion->fec_resolucion_baja=$_GET['txtFechaResolucionBaja'];
+	    $obj_matriculacion->fec_matricula =$_GET['txtFechaMP'];
+		 $obj_matriculacion->venc_matricula =$_GET[txtVencMP];
+	    $obj_matriculacion->id_usuario =9;
+		//	echo $obj_matriculacion->nro_resolucion ."--". $obj_matriculacion->fec_resolucion ."--". $obj_matriculacion->resolucion_baja 
+		//	."--".$obj_matriculacion->fec_resolucion_baja ."--".$obj_matriculacion->fec_matricula."--".$obj_matriculacion->id_usuario;	 	 
+	 	 $obj_matriculacion->guardar_matriculacion( $obj_matriculacion);
+	 	 
+		 $obj_matriculacion = new titulo();
+		 $obj_matriculacion->nro_resolucion =$_GET['txtTitulo'];
+	    $obj_matriculacion->fec_resolucion=$_GET['txtFechaResolucion'];
+	    $obj_matriculacion->resolucion_baja =$_GET['txtResolucionBaja'];
+	    $obj_matriculacion->id_usuario =9;
+		//	echo $obj_matriculacion->nro_resolucion ."--". $obj_matriculacion->fec_resolucion ."--". $obj_matriculacion->resolucion_baja 
+		//	."--".$obj_matriculacion->fec_resolucion_baja ."--".$obj_matriculacion->fec_matricula."--".$obj_matriculacion->id_usuario;	 	 
+	 	 $obj_matriculacion->guardar_matriculacion( $obj_matriculacion);
+	 	 
+	 	 
+	 	 
+	 	 
 	 
 }
 
