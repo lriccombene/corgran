@@ -50,10 +50,10 @@ class matriculacion {
 		//echo $result->num_rows;
 		if ($result->num_rows > 0) {
 		    $sql = "Update matriculacion set  nro_resolucion =$obj_matri->nro_resolucion,
-		            fec_resolucion ='$obj_matri->fec_resolucion',resolucion_baja ='$obj_matri->resolucion_baja',
+		            fec_resolucion =$obj_matri->fec_resolucion,resolucion_baja =$obj_matri->resolucion_baja,
                   fec_matricula ='$obj_matri->fec_matricula',venc_matricula ='$obj_matri->venc_matricula',
-                  'fec_resolucion_baja' =$obj_matri->fec_resolucion_baja; 
-                  where id_matriculacion =$obj_matri->id_matriculacion";
+                  'fec_resolucion_baja' =$obj_matri->'fec_resolucion_baja'
+                  WHERE id_usuario=$obj_matri->id_usuario";
 		} else {
 		       $sql = "INSERT INTO matriculacion (id_usuario,nro_resolucion,fec_resolucion_baja,fec_resolucion,resolucion_baja,fec_matricula,venc_matricula)
                 		VALUES ($obj_matri->id_usuario,$obj_matri->nro_resolucion,'$obj_matri->fec_resolucion_baja',
