@@ -1,25 +1,16 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
     namespace app\clases;
-    require_once 'clases/coneccion.php';
-    use \mysqli;
-    use \mysqli_query;
-    use \mysqli_error;
-    use \mysql_fetch_assoc;
-    use  app\clases\coneccion;
-	$obj_coneccion = new coneccion; //
-/**
- * Description of cuotas
- *
- * @author soporte
- */
-class datos_personales {
+    use mysqli;
+    use mysqli_query;
+    use mysqli_error;
+    use mysql_fetch_assoc;
+
+//$obj_coneccion = new coneccion(); //
+
+
+
+class datos_personales{
     public $id_datos_personales;
     public $apellido; //directoria o ruta de archivo
     public $nombre; 
@@ -27,9 +18,10 @@ class datos_personales {
     public $cuit_cuil;
     public $fec_nac;
     public $id_usuario;
+    public $mp;
     
 
-    public function __construct($id_datos_personales, $apellido, $nombre,$dni,$cuit_cuil,$fec_nac,$id_usuario) {
+    public function __construct($id_datos_personales, $apellido, $nombre,$dni,$cuit_cuil,$fec_nac,$id_usuario,$mp) {
             $this->id_datos_personales=$id_datos_personales;
             $this->apellido=$apellido;
             $this->nombre=$nombre;
@@ -37,29 +29,51 @@ class datos_personales {
             $this->cuit_cuil=$cuit_cuil;
             $this->fec_nac=$fec_nac;
             $this->id_usuario=$id_usuario;
+            $this->mp=$mp;
             
     } 
     
-    public function guardar_datos_personales($obj_dtos_per){
+    public function guardar_datos_personales($obj_dts_perso){
+		/*echo "estamos en datos personales".$obj_dts_perso->apellido.', '.$obj_dts_perso->nombre.','.$obj_dts_perso->dni.',
+		        '.$obj_dts_perso->cuit_cuil.','.$obj_dts_perso->fec_nac.','.$obj_dts_perso->mp."----".$obj_dts_perso->id_usuario;*/
+	   $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+		// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		} 
+	   
+		$sql= "SELECT * FROM `datos_personales` WHERE id_usuario=$obj_dts_perso->id_usuario";
+		$result = $conn->query($sql);
 
-        // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "INSERT INTO datos_personales (id_usuario, apellido, nombre,dni,cuit_cuil,fec_nac)
-        VALUES ('$obj_dtos_per->id_usuario','$obj_dtos_per->apellido', '$obj_dtos_per->nombre','$obj_dtos_per->dni',
-        '$obj_dtos_per->cuit_cuil','$obj_dtos_per->fec_nac')";
-        
-        if ($conn->query($sql) === TRUE) {
-            $result = $conn->lastInsertRowID();
-        } else {
-            $result = "Error: " . $sql . "<br>" . $conn->error;
-        }
-        
-        $conn->close();
-        return $result;
+
+		if ($result->num_rows > 0) {
+		            $sql = "Update datos_personales set apellido=$obj_dts_perso->apellido, nombre=$obj_dts_perso->nombre,
+                dni=$obj_dts_perso->dni,cuit_cuil=$obj_dts_perso->cuit_cuil,fec_nac='$obj_dts_perso->fec_nac',
+                mp=$obj_dts_perso->mp where id_usuario =$obj_dts_perso->id_usuario";
+		} else {
+					
+		        $sql ="INSERT INTO `datos_personales`( `apellido`, `nombre`, `dni`, `cuit_cuil`, `fec_nac`, `id_usuario`, `mp`) 
+		        VALUES ($obj_dts_perso->apellido,$obj_dts_perso->nombre,$obj_dts_perso->dni,$obj_dts_perso->cuit_cuil,
+		        '$obj_dts_perso->fec_nac',$obj_dts_perso->id_usuario,$obj_dts_perso->mp)"; 
+				echo $sql ;		
+		}
+		if ($conn->query($sql) === TRUE) {
+			            $result = "OK";
+
+	   } else {
+	            echo "Error: " . $sql . "<br>" . $conn->error;
+	   }
+	   $conn->close();
+
+    
 
     }
-    
+  /*  
     public function borrar_datos_personales($id_usuario){
         
          // Create connection
@@ -99,4 +113,6 @@ class datos_personales {
         mysqli_query($conn,$sql) or die(mysqli_error($conn));
         $conn->close();
     }
+    */
 }
+?>
