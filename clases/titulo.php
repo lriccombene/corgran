@@ -1,27 +1,17 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
     namespace app\clases;
-    require_once 'clases/coneccion.php';
-    use \mysqli;
-    use \mysqli_query;
-    use \mysqli_error;
-    use \mysql_fetch_assoc;
-    use  app\clases\coneccion;
-	$obj_coneccion = new coneccion; //
-/**
- * Description of cuotas
- *
- * @author soporte
- */
+    use mysqli;
+    use mysqli_query;
+    use mysqli_error;
+    use mysql_fetch_assoc;
+
+//$obj_coneccion = new coneccion(); //
+
+
 class titulo {
     public $id_titulo;
-    public $id_usuario; //directoria o ruta de archivo
+    public $id_usuario; 
     public $expedido_por;
     public $fec_egreso;
     public $descripcion;
@@ -37,21 +27,41 @@ class titulo {
     } 
     public function guardar_titulo($obj_titulo){
 
-        // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "INSERT INTO titulo (id_usuario, expedido_por, fec_egreso,descripcion)
-                VALUES ('$obj_titulo->id_usuario','$obj_titulo->expedido_por', 
-                        '$obj_titulo->fec_egreso','$obj_titulo->descripcion')";
-        
-        if ($conn->query($sql) === TRUE) {
-            $result = $conn->lastInsertRowID();
-        } else {
-            $result = "Error: " . $sql . "<br>" . $conn->error;
-        }
-        
-        $conn->close();
-        return $result;
+
+	   $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+		// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		} 
+	   
+		$sql= "SELECT * FROM `titulo` WHERE id_usuario=$obj_titulo->id_usuario";
+		$result = $conn->query($sql);
+
+		echo "NRO de ROWESSSS:".$result->num_rows;
+		if ($result->num_rows > 0) {
+			
+		 //echo "titulo".$obj_titulo->expedido_por ."--". $obj_titulo->fec_egreso ."--". $obj_titulo->descripcion;
+		 
+		            $sql = "Update titulo set expedido_por = $obj_titulo->expedido_por, fec_egreso='$obj_titulo->fec_egreso',
+                descripcion = $obj_titulo->descripcion WHERE id_usuario=$obj_titulo->id_usuario";
+		} else {
+					
+		        $sql ="INSERT INTO titulo (id_usuario, expedido_por, fec_egreso,descripcion)
+                VALUES ($obj_titulo->id_usuario,$obj_titulo->expedido_por, 
+                        '$obj_titulo->fec_egreso',$obj_titulo->descripcion)";		
+		}
+		if ($conn->query($sql) === TRUE) {
+			            $result = "OK";
+
+	   } else {
+	            echo "Error: " . $sql . "<br>" . $conn->error;
+	   }
+	   $conn->close();
 
     }  
     public function borrar_titulo($id_titulo){
