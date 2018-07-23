@@ -51,43 +51,47 @@ class datos_contacto {
             $this->email_laboral=$email_laboral; 
     } 
     
-    public function guardar_datos_contacto($obj_datos_contacto){
+    public function guardar_datos_contacto($obj_dts_contacto){
+	   $servername = "localhost";
+		$username = "root";
+		$password = "slam2018";
+		$dbname = "corgran";
+		// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		} 
+		$sql= "SELECT * FROM `datos_contacto` WHERE id_usuario=$obj_dts_contacto->id_usuario";
+		$result = $conn->query($sql);
+		$resultado="";
+		echo "metodo guarar dts contac".$result->num_rows;
+		if ($result->num_rows > 0) {
+		    $sql = "Update datos_contacto set domic_personal=$obj_dts_contacto->domic_personal, telefono=$obj_dts_contacto->telefono,
+                									  empresa=$obj_dts_contacto->empresa, domic_laboral=$obj_dts_contacto->domic_laboral, 
+                									  domic_consultorio =$obj_dts_contacto->domic_consultorio,
+                									  localidad =$obj_dts_contacto->localidad,
+                									  telefono_laboral=$obj_dts_contacto->telefono_laboral,email='$obj_dts_contacto->email',
+                									  email_laboral='$obj_dts_contacto->email_laboral'
+                	where id_usuario =$obj_dts_contacto->id_usuario";
+		} else {
+		       $sql = "INSERT INTO datos_contacto (id_usuario,domic_personal,telefono,empresa,domic_laboral,
+                                  					domic_consultorio,localidad,telefono_laboral,email,email_laboral)
+                VALUES ($obj_dts_contacto->id_usuario,$obj_dts_contacto->domic_personal,$obj_dts_contacto->telefono,
+                        $obj_dts_contacto->empresa,$obj_dts_contacto->domic_laboral,$obj_dts_contacto->domic_consultorio,
+                        $obj_dts_contacto->localidad,$obj_dts_contacto->telefono_laboral,'$obj_dts_contacto->email',
+                        '$obj_dts_contacto->email_laboral')";
+		}
+		if ($conn->query($sql) === TRUE) {
+			            $result = "OK";
 
-        // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "INSERT INTO datos_contacto (id_usuario,domic_personal,telefono,empresa,domic_laboral,
-                                            domic_consultorio,localidad,telefono_laboral,
-                                            email,email_laboral)
-                VALUES ('$obj_datos_contacto->id_usuario','$obj_datos_contacto->domic_personal','$obj_datos_contacto->telefono',
-                        '$obj_datos_contacto->empresa','$obj_datos_contacto->domic_laboral','$obj_datos_contacto->domic_consultorio',
-                        '$obj_datos_contacto->localidad','$obj_datos_contacto->telefono_laboral','$obj_datos_contacto->email',
-                        '$obj_datos_contacto->email_laboral')";
-        
-        if ($conn->query($sql) === TRUE) {
-            $result = $conn->lastInsertRowID();
-        } else {
-            $result = "Error: " . $sql . "<br>" . $conn->error;
-        }
-        
-        $conn->close();
-        return $result;
-
+	   } else {
+	            echo "Error: " . $sql . "<br>" . $conn->error;
+	   }
+	   $conn->close();
+	   echo "grabado ok DATOS DE CONTACTO";
     }
-    
-    public function borrar_datos_contacto($id_usuario){
-        
-         // Create connection
-        $conn = $obj_coneccion->conectar();
-        
-        $sql = "Delete from datos_contacto where id_usuario ="$id_usuario;
-        
-        mysqli_query($conn,$sql) or die(mysqli_error($conn));
-        
-        $conn->close();
-
-    }
-
+/*
     public function buscar_datos_datos_contacto($id_usuario):array
     {
         
@@ -123,5 +127,5 @@ class datos_contacto {
         $conn->close();
 
     }
-
+*/
 }
