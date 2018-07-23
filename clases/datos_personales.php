@@ -52,6 +52,7 @@ class datos_personales{
 
 
 		if ($result->num_rows > 0) {
+			//echo "------------MP:". $obj_dts_perso->mp."-----------------------------";
 		            $sql = "Update datos_personales set apellido=$obj_dts_perso->apellido, nombre=$obj_dts_perso->nombre,
                 dni=$obj_dts_perso->dni,cuit_cuil=$obj_dts_perso->cuit_cuil,fec_nac='$obj_dts_perso->fec_nac',
                 mp=$obj_dts_perso->mp where id_usuario =$obj_dts_perso->id_usuario";
