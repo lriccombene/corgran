@@ -17,6 +17,7 @@
 	require_once 'clases/datos_personales.php';
 	require_once 'clases/matriculacion.php';
 	require_once 'clases/titulo.php';
+	require_once 'clases/datos_contacto.php';
 
 
 
@@ -55,25 +56,41 @@ if(isset($_GET['btnAceptar'])){
 	    $obj_matriculacion->resolucion_baja =$_GET['txtResolucionBaja'];
 	    $obj_matriculacion->fec_resolucion_baja=$_GET['txtFechaResolucionBaja'];
 	    $obj_matriculacion->fec_matricula =$_GET['txtFechaMP'];
-		 $obj_matriculacion->venc_matricula =$_GET[txtVencMP];
+		 $obj_matriculacion->venc_matricula =$_GET['txtVencMP'];
 	    $obj_matriculacion->id_usuario =9;
-		//	echo $obj_matriculacion->nro_resolucion ."--". $obj_matriculacion->fec_resolucion ."--". $obj_matriculacion->resolucion_baja 
-		//	."--".$obj_matriculacion->fec_resolucion_baja ."--".$obj_matriculacion->fec_matricula."--".$obj_matriculacion->id_usuario;	 	 
+			echo $obj_matriculacion->nro_resolucion ."--". $obj_matriculacion->fec_resolucion ."--". $obj_matriculacion->resolucion_baja 
+			."--".$obj_matriculacion->fec_resolucion_baja ."--".$obj_matriculacion->fec_matricula."--".$obj_matriculacion->id_usuario;	 	 
 	 	 $obj_matriculacion->guardar_matriculacion( $obj_matriculacion);
+//echo"termino matricula";	 	 
+			
+		 $obj_titulo = new titulo();
+		 $obj_titulo->expedido_por =$_GET['txtExpedidoPor'];
+	    $obj_titulo->fec_egreso=$_GET['txtFechaEgreso'];
+	    $obj_titulo->descripcion=$_GET['txtTitulo'];
+	    $obj_titulo->id_usuario =9;
+		 echo $obj_titulo->expedido_por ."--". $obj_titulo->fec_egreso ."--". $obj_titulo->descripcion;	 
+	 	 $obj_titulo->guardar_titulo($obj_titulo);
+	 	 echo"termino titulo";	
 	 	 
-		 $obj_matriculacion = new titulo();
-		 $obj_matriculacion->nro_resolucion =$_GET['txtTitulo'];
-	    $obj_matriculacion->fec_resolucion=$_GET['txtFechaResolucion'];
-	    $obj_matriculacion->resolucion_baja =$_GET['txtResolucionBaja'];
-	    $obj_matriculacion->id_usuario =9;
-		//	echo $obj_matriculacion->nro_resolucion ."--". $obj_matriculacion->fec_resolucion ."--". $obj_matriculacion->resolucion_baja 
-		//	."--".$obj_matriculacion->fec_resolucion_baja ."--".$obj_matriculacion->fec_matricula."--".$obj_matriculacion->id_usuario;	 	 
-	 	 $obj_matriculacion->guardar_matriculacion( $obj_matriculacion);
+	 	 $obj_dts_contacto = new datos_contacto();
+		 $obj_dts_contacto->domic_personal =$_GET['txtDirPersonal'];
+	    $obj_dts_contacto->telefono=$_GET['txtTelPers'];
+	    $obj_dts_contacto->empresa=$_GET['txtInst'];
+	    $obj_dts_contacto->domic_laboral=$_GET['txtDomicilioLaboral'];
+	    $obj_dts_contacto->domic_consultorio=$_GET['txtDirConsultorio'];
+	    $obj_dts_contacto->localidad=$_GET['txtLocalidadConsultorio'];
+	    $obj_dts_contacto->telefono_laboral=$_GET['txtTelConsultorio'];
+	    $obj_dts_contacto->email=$_GET['txtMail'];
+	    $obj_dts_contacto->email_laboral=$_GET['txtMailAlternativo'];
+	    $obj_dts_contacto->id_usuario =9;
+		 
+		 echo "----------datos contacto:" .$obj_dts_contacto->domic_personal ."--". $obj_titulo->telefono 
+		 		."--". $obj_dts_contacto->empresa."--". $obj_dts_contacto->domic_laboral;	 
+
+	 	 $obj_dts_contacto->guardar_datos_contacto($obj_dts_contacto);
 	 	 
 	 	 
 	 	 
-	 	 
-	 
 }
 
 	//esto hay que modificarlo lo dejo en 9 para continuar pero tiene que llegar en la URL
