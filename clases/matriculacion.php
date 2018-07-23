@@ -31,9 +31,8 @@ class matriculacion {
     } 
     
     public function guardar_matriculacion($obj_matri){
-    	/*echo $obj_matri->nro_resolucion ."--". $obj_matri->fec_resolucion ."--". $obj_matri->resolucion_baja 
-			."--".$obj_matri->fec_resolucion_baja ."--".$obj_matri->fec_matricula."--".$obj_matri->id_usuario;
-*/
+    	
+    
 	   $servername = "localhost";
 		$username = "root";
 		$password = "slam2018";
@@ -47,13 +46,19 @@ class matriculacion {
 		$sql= "SELECT * FROM `matriculacion` WHERE id_usuario=$obj_matri->id_usuario";
 		$result = $conn->query($sql);
 		$resultado="";
-		//echo $result->num_rows;
+
 		if ($result->num_rows > 0) {
-		    $sql = "Update matriculacion set  nro_resolucion =$obj_matri->nro_resolucion,
-		            fec_resolucion =$obj_matri->fec_resolucion,resolucion_baja =$obj_matri->resolucion_baja,
-                  fec_matricula ='$obj_matri->fec_matricula',venc_matricula ='$obj_matri->venc_matricula',
-                  'fec_resolucion_baja' =$obj_matri->'fec_resolucion_baja'
-                  WHERE id_usuario=$obj_matri->id_usuario";
+		echo "hay para actulizar matriculacion ".$result->num_rows ."----------------------------";
+
+         
+		    $sql = "Update matriculacion set   nro_resolucion =$obj_matri->nro_resolucion ,
+										            	fec_resolucion ='$obj_matri->fec_resolucion',
+											            resolucion_baja =$obj_matri->resolucion_baja ,
+									                  fec_matricula ='$obj_matri->fec_matricula',
+									                  venc_matricula ='$obj_matri->venc_matricula',
+									                  fec_resolucion_baja ='$obj_matri->fec_resolucion_baja'
+						WHERE id_usuario=$obj_matri->id_usuario";
+         echo $sql;
 		} else {
 		       $sql = "INSERT INTO matriculacion (id_usuario,nro_resolucion,fec_resolucion_baja,fec_resolucion,resolucion_baja,fec_matricula,venc_matricula)
                 		VALUES ($obj_matri->id_usuario,$obj_matri->nro_resolucion,'$obj_matri->fec_resolucion_baja',
@@ -62,6 +67,7 @@ class matriculacion {
 		}
 		if ($conn->query($sql) === TRUE) {
 			            $result = "OK";
+
 
 	   } else {
 	            echo "Error: " . $sql . "<br>" . $conn->error;
