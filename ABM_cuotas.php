@@ -2,19 +2,28 @@
 <?php
     session_start();
     require_once 'header.php';
-    //$_SESSION['Buscar']=FALSE;
+    $_SESSION['Buscar']=TRUE;
     
 ?>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
-
-
+<script>
+	function realizaProcesoPagar(valorCaja1){
+      $.ajax({
+    type: 'POST',
+    url: 'clases/usuario.php',
+    data: {'valorCaja1': valorCaja1},
+    success: function(msg) {
+      //alert(msg);
+      window.location.href = 'index.php?id_usu='+valorCaja1;
+    }
+  });
+</script>
 <?php
 
 	 require_once 'clases/datos_personales.php';
     use app\clases\datos_personales;
-    $obj_usuario = new datos_personaless; // 
+    $obj_dts_perso = new datos_personales; // 
 ?>
-
 
 
 <div class="container-fluid">
@@ -72,13 +81,13 @@
                                         $lista=[];
                                         if( $_SESSION['Buscar']==null){
 														                                        	
-                                        		$lista=$obj_usuario::paginado_usuario();
+                                        		$lista=$obj_dts_perso::paginado_dts_perso();
                                             //$lista=$obj_usuario::lista_usuarios();
 
                                        }elseif($_SESSION['Buscar']==TRUE){
-                                            $lista=$obj_usuario::Buscar_usuario();
-											$lista=$_SESSION['resultado'];
-											//var_dump($_SESSION['nombre']);
+                                            $lista=$obj_dts_perso-> buscar_dts_perso_ape();
+														  $lista=$_SESSION['resultado'];
+														
                                         }
                                         
                                         foreach ($lista as $value) {
@@ -110,13 +119,6 @@
                                       ?>
 				</tbody>
 			</table>
-		</div>
-	</div>
-</div>
-
-
-
-			</form>
 		</div>
 	</div>
 </div>
