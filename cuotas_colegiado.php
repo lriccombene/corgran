@@ -3,6 +3,9 @@
     session_start();
     require_once 'header.php';
 ?>
+
+<div>-*-----------Lista de Cuotas por Colegiado----------------------</div>
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
@@ -21,22 +24,52 @@
 						<th>
 							Tipo Cta
 						</th>
+						<th>
+							Valor Cta
+						</th>
+						<th>
+							Pagado
+						</th>
+						<th>
+							Interes
+						</th>
+						<th>
+							Pago Adelantado
+						</th>
+						<th>
+							Accion
+						</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>
-							1
-						</td>
-						<td>
-							TB - Monthly
-						</td>
-						<td>
-							01/04/2012
-						</td>
-						<td>
-							Default
-						</td>
+						<th>
+							ID 
+						</th>
+						<th>
+							Fec Cta
+						</th>
+						<th>
+							Estado
+						</th>
+						<th>
+							Tipo Cta
+						</th>
+						<th>
+							Valor Cta
+						</th>
+						<th>
+							Pagado
+						</th>
+						<th>
+							Interes
+						</th>
+						<th>
+							Pago Adelantado
+						</th>
+						<th>
+							Accion
+						</th>
 					</tr>
 					
 				</tbody>
@@ -50,10 +83,10 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
-			<form role="form">
+			<form role="form" id="form_cta_pagar" method="GET" action="/corgran/clases/cuota.php">
  					<div class="form-group">
 		            <label>Fecha Cuota</label>
-		            <input name="txtFecNac" type="date" value="" id="txtFecNac" class="form-control" />
+		            <input name="txtFecCta" type="date" value="" id="txtFecCta" class="form-control" />
 		        </div>
 			 <div class="form-group">
 			        <label>Estado</label>
@@ -98,9 +131,7 @@
 
 						</select>
 		        </div>
-				<button type="submit" class="btn btn-primary">
-					Submit
-				</button>
+					<button type="submit" class="btn btn-primary" name="pagar_cta_cole" id="pagar_cta_cole">Buscar</button>
 			</form>
 		</div>
 	</div>
